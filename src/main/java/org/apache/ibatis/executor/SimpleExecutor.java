@@ -1,5 +1,5 @@
 /*
- *    Copyright 2009-2021 the original author or authors.
+ *    Copyright 2009-2022 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -83,8 +83,11 @@ public class SimpleExecutor extends BaseExecutor {
 
   private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
     Statement stmt;
+    // 获取连接对象
     Connection connection = getConnection(statementLog);
+    // 构建Statement对象 预处理
     stmt = handler.prepare(connection, transaction.getTimeout());
+    // 参数配置
     handler.parameterize(stmt);
     return stmt;
   }
