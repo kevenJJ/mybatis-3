@@ -16,6 +16,7 @@
 package com.keven.mybatis.test;
 
 import com.keven.mybatis.entity.Blog;
+import com.keven.mybatis.mapper.BlogMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -26,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.util.Properties;
 
 /**
@@ -41,6 +43,10 @@ public class MybatisDemo {
 
     SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
     SqlSession sqlSession = sessionFactory.openSession();
+
+    BlogMapper mapper = sqlSession.getMapper(BlogMapper.class);
+    Blog selectBlogById = mapper.selectBlogById("1");
+    System.out.println(selectBlogById);
 
     Blog blog = sqlSession.selectOne("com.keven.mybatis.mapper.BlogMapper.selectBlogById", 1);
     System.out.println(blog);

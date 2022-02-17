@@ -16,19 +16,29 @@
 package com.keven.mybatis.test;
 
 import com.keven.mybatis.entity.Blog;
+import org.apache.ibatis.executor.SimpleExecutor;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.transaction.jdbc.JdbcTransaction;
+import org.junit.Before;
 import org.junit.Test;
 
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import static com.keven.mybatis.constant.JdbcConstant.*;
 
 public class JunitTest {
   @Test
-  public void test1() throws IOException {
+  public void test() throws IOException {
     String resources = "mybatis-config.xml";
     InputStream resourceAsStream = Resources.getResourceAsStream(resources);
 
@@ -37,6 +47,25 @@ public class JunitTest {
 
     Blog blog = sqlSession.selectOne("com.keven.mybatis.mapper.BlogMapper.selectBlogById", 1);
     System.out.println(blog);
+
+  }
+
+  private Configuration configuration;
+  private JdbcTransaction jdbcTransaction;
+  private Connection connection;
+
+  @Before
+  public void init() throws IOException, SQLException {
+    SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
+    SqlSessionFactory build = sqlSessionFactoryBuilder.build(Resources.getResourceAsStream("mybatis-config.xml"));
+    configuration = build.getConfiguration();
+    connection = DriverManager.getConnection(URL,USER,PASSWORD);
+    jdbcTransaction = new JdbcTransaction(connection);
+  }
+
+  @Test
+  public void simpleExecutorTest() {
+    SimpleExecutor simpleExecutor = new SimpleExecutor(configuration,jdbcTransaction);
 
   }
 
